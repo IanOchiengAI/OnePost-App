@@ -1,0 +1,8 @@
+{
+  "name": "PostOnce",
+  "description": "A mobile-first social media publishing tool for solo business owners. Create once, publish everywhere.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone"
+  ]
+}
