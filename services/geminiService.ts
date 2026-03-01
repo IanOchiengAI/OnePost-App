@@ -1,8 +1,13 @@
 import { GoogleGenAI } from "@google/genai";
 import { supabase } from './supabaseClient';
 
-const apiKey = import.meta.env.VITE_GEMINI_API_KEY || '';
-const ai = new GoogleGenAI({ apiKey });
+const getAI = () => {
+  const apiKey = import.meta.env.VITE_GEMINI_API_KEY || '';
+  if (!apiKey) {
+    throw new Error("Gemini API Key is missing. Please check your environment variables.");
+  }
+  return new GoogleGenAI({ apiKey });
+};
 
 /**
  * Fetches the current user's brand voice prompt from Supabase.
@@ -31,9 +36,10 @@ export const generateCaptionFromImage = async (
   tone: 'Friendly' | 'Professional' | 'Sales' = 'Friendly',
   platform?: 'Instagram' | 'Facebook' | 'TikTok'
 ): Promise<string> => {
+  const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
   if (!apiKey) {
     console.warn("Gemini API Key is missing.");
-    return "API Key missing. Please set up your environment.";
+    return "AI Feature disabled: API Key missing. Please set VITE_GEMINI_API_KEY.";
   }
 
   try {
@@ -65,7 +71,7 @@ export const generateCaptionFromImage = async (
     - Under 280 characters total.
     - No conversational filler or introductory text. Just the caption and hashtags.`;
 
-    const response = await ai.models.generateContent({
+    const response = await getAI().models.generateContent({
       model: 'gemini-1.5-flash',
       contents: {
         parts: [
@@ -97,7 +103,7 @@ export const suggestOptimalPostingTime = async (
   imageBase64?: string,
   platform?: 'Instagram' | 'Facebook' | 'TikTok'
 ): Promise<{ day: string; time: string; reason: string }> => {
-  if (!apiKey) {
+  if (!import.meta.env.VITE_GEMINI_API_KEY) {
     throw new Error("Gemini API Key is missing.");
   }
 
@@ -135,7 +141,7 @@ export const suggestOptimalPostingTime = async (
 
     parts.push({ text: prompt });
 
-    const response = await ai.models.generateContent({
+    const response = await getAI().models.generateContent({
       model: 'gemini-1.5-flash',
       contents: { parts }
     });
@@ -158,7 +164,7 @@ export const suggestOptimalPostingTime = async (
  * Generates AI-driven strategy tips based on performance data.
  */
 export const getStrategyTips = async (): Promise<string> => {
-  if (!apiKey) throw new Error("Gemini API Key is missing.");
+  if (!import.meta.env.VITE_GEMINI_API_KEY) throw new Error("Gemini API Key is missing.");
 
   try {
     const { data: snapshots, error } = await supabase
@@ -185,7 +191,7 @@ export const getStrategyTips = async (): Promise<string> => {
     - Keep tips concise and encouraging.
     - Return a bulleted list of 3 tips.`;
 
-    const response = await ai.models.generateContent({
+    const response = await getAI().models.generateContent({
       model: 'gemini-1.5-flash',
       contents: {
         parts: [{ text: prompt }]
