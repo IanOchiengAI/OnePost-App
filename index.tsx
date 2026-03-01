@@ -14,7 +14,9 @@ const root = ReactDOM.createRoot(rootElement);
 root.render(
   <React.StrictMode>
     <ErrorBoundary>
-      <App />
+      <BrowserRouter suppressHydrationWarning>
+        <App />
+      </BrowserRouter>
     </ErrorBoundary>
   </React.StrictMode>
 );
