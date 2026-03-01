@@ -1,0 +1,47 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply font-display bg-background-light dark:bg-background-dark text-slate-900 dark:text-white antialiased selection:bg-primary selection:text-black;
+    -webkit-tap-highlight-color: transparent;
+  }
+}
+
+/* Custom Toggle Switch */
+.toggle-checkbox:checked {
+  right: 0;
+  border-color: #13ec5b;
+}
+
+.toggle-checkbox:checked+.toggle-label {
+  background-color: #13ec5b;
+}
+
+/* Hide scrollbar */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Material Symbols - filled variation */
+.material-symbols-outlined {
+  font-variation-settings:
+    'FILL' 0,
+    'wght' 400,
+    'GRAD' 0,
+    'opsz' 24
+}
+
+.icon-fill {
+  font-variation-settings: 'FILL' 1 !important;
+}
+
+.icon-no-fill {
+  font-variation-settings: 'FILL' 0 !important;
+}

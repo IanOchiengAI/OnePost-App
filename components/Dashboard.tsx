@@ -21,7 +21,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ posts, userName, onCreateC
           <h1 className="text-2xl font-extrabold tracking-tight text-slate-900 dark:text-white">{userName}</h1>
         </div>
         <button className="relative p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors">
-          <span className="material-symbols-outlined text-slate-900 dark:text-white" style={{ fontSize: '28px' }}>notifications</span>
+          <span className="material-symbols-outlined text-slate-900 dark:text-white text-[28px]">notifications</span>
           <span className="absolute top-2 right-2 h-2.5 w-2.5 rounded-full bg-primary border-2 border-surface-light dark:border-surface-dark"></span>
         </button>
       </header>
@@ -30,7 +30,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ posts, userName, onCreateC
       <main className="flex-1 overflow-y-auto no-scrollbar pb-24">
         {/* Hero Action Card */}
         <div className="px-6 py-6">
-          <div 
+          <div
             onClick={onCreateClick}
             className="relative overflow-hidden rounded-xl bg-surface-light dark:bg-surface-dark shadow-sm hover:shadow-md transition-shadow duration-300 group cursor-pointer border border-gray-100 dark:border-gray-800"
           >
@@ -38,9 +38,9 @@ export const Dashboard: React.FC<DashboardProps> = ({ posts, userName, onCreateC
             <div className="absolute -right-10 -top-10 h-40 w-40 rounded-full bg-primary/10 blur-3xl group-hover:bg-primary/20 transition-all"></div>
             <div className="flex flex-col sm:flex-row items-stretch">
               <div className="w-full sm:w-1/3 h-40 sm:h-auto relative">
-                <img 
-                  alt="Abstract colorful gradient" 
-                  className="h-full w-full object-cover" 
+                <img
+                  alt="Abstract colorful gradient"
+                  className="h-full w-full object-cover"
                   src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=2564&auto=format&fit=crop"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent sm:bg-gradient-to-r sm:from-transparent sm:to-black/10"></div>
@@ -51,7 +51,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ posts, userName, onCreateC
                   Create a new post and engage with your audience today.
                 </p>
                 <button className="flex items-center justify-center gap-2 w-full bg-primary hover:bg-primary-dark text-black font-bold py-3 px-4 rounded-lg transition-transform active:scale-95 shadow-lg shadow-primary/20">
-                  <span className="material-symbols-outlined" style={{ fontSize: '20px' }}>add_circle</span>
+                  <span className="material-symbols-outlined text-[20px]">add_circle</span>
                   <span>Create Post</span>
                 </button>
               </div>
@@ -87,23 +87,39 @@ export const Dashboard: React.FC<DashboardProps> = ({ posts, userName, onCreateC
             <h3 className="text-lg font-bold text-slate-900 dark:text-white">Recent Activity</h3>
             <button onClick={onViewCalendar} className="text-sm font-semibold text-primary hover:text-primary-dark transition-colors">See All</button>
           </div>
-          
+
           <div className="flex flex-col gap-0 relative">
             {scheduledPosts.length === 0 ? (
-               <div className="text-center py-8 opacity-50">
-                  <span className="material-symbols-outlined text-4xl mb-2">event_busy</span>
-                  <p>No posts yet.</p>
-               </div>
+              <div className="text-center py-8 opacity-50">
+                <span className="material-symbols-outlined text-4xl mb-2">event_busy</span>
+                <p>No posts yet.</p>
+              </div>
             ) : (
               scheduledPosts.map((post, index) => {
                 const isLast = index === scheduledPosts.length - 1;
-                // Simple logic to pick an icon based on platform
-                const platform = post.platforms[0]; 
+                const platform = post.platforms[0];
                 let iconColor = 'bg-gray-100 text-gray-600';
                 let icon = 'public';
+                // Assuming Platform enum is imported or defined elsewhere, using string literals for now
                 if (platform === 'Instagram') { iconColor = 'bg-pink-50 text-pink-600'; icon = 'photo_camera'; }
                 if (platform === 'Facebook') { iconColor = 'bg-blue-50 text-blue-600'; icon = 'public'; }
                 if (platform === 'TikTok') { iconColor = 'bg-black/5 text-black'; icon = 'music_note'; }
+
+                // Status Badge Logic
+                let statusColor = 'bg-amber-100 text-amber-800';
+                let statusLabel = post.status as string;
+                let showPulse = false;
+
+                if (post.status === PostStatus.Published) {
+                  statusColor = 'bg-green-100 text-green-800';
+                } else if (post.status === PostStatus.Failed) {
+                  statusColor = 'bg-red-100 text-red-800 font-bold';
+                  statusLabel = 'Failed';
+                } else if (post.status === PostStatus.Publishing) {
+                  statusColor = 'bg-blue-100 text-blue-800';
+                  statusLabel = 'Publishing...';
+                  showPulse = true;
+                }
 
                 return (
                   <div key={post.id} className={`group flex gap-4 relative ${isLast ? 'last-item' : ''}`}>
@@ -114,22 +130,33 @@ export const Dashboard: React.FC<DashboardProps> = ({ posts, userName, onCreateC
                       </div>
                       {!isLast && <div className="absolute top-10 bottom-[-1rem] w-0.5 bg-gray-200 dark:bg-gray-800 -z-10"></div>}
                     </div>
-                    
+
                     {/* Card */}
                     <div className="flex-1 pb-6">
                       <div className="bg-surface-light dark:bg-surface-dark p-4 rounded-xl border border-gray-100 dark:border-gray-800 shadow-sm hover:shadow-md transition-shadow">
                         <div className="flex justify-between items-start mb-2">
-                          <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${post.status === PostStatus.Published ? 'bg-green-100 text-green-800' : 'bg-amber-100 text-amber-800'}`}>
-                              {post.status}
+                          <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${statusColor}`}>
+                            {showPulse && <span className="size-1.5 rounded-full bg-blue-600 animate-pulse mr-1.5"></span>}
+                            {statusLabel}
                           </span>
                           <span className="text-sm font-semibold text-gray-500">
-                             {post.scheduledDate ? new Date(post.scheduledDate).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : 'Just now'}
+                            {post.scheduledDate ? new Date(post.scheduledDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : 'Just now'}
                           </span>
                         </div>
-                        <h4 className="font-bold text-slate-900 dark:text-white mb-1 line-clamp-1">{post.caption || 'Untitled Post'}</h4>
-                        <div className="flex items-center gap-2 text-xs text-gray-500">
-                          <span className="material-symbols-outlined text-base">image</span>
-                          <span>{post.format}</span>
+                        <div className="flex items-center justify-between mt-3">
+                          <div className="flex items-center gap-2 text-xs text-gray-500">
+                            <span className="material-symbols-outlined text-base">image</span>
+                            <span>{post.format}</span>
+                          </div>
+                          {post.status === PostStatus.Failed && (
+                            <button
+                              onClick={onCreateClick}
+                              className="text-[10px] font-bold text-red-600 bg-red-50 px-2 py-1 rounded-md hover:bg-red-100 transition-colors flex items-center gap-1"
+                            >
+                              <span className="material-symbols-outlined text-sm">edit</span>
+                              FIX THIS
+                            </button>
+                          )}
                         </div>
                       </div>
                     </div>
