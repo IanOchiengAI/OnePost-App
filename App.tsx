@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom';
 import { CreatePost } from './components/CreatePost';
-const Dashboard = React.lazy(() => import('./components/Dashboard').then(m => ({ default: m.Dashboard })));
+import { Dashboard } from './components/Dashboard';
 const Analytics = React.lazy(() => import('./components/Analytics').then(m => ({ default: m.Analytics })));
 const CalendarView = React.lazy(() => import('./components/CalendarView').then(m => ({ default: m.CalendarView })));
 const Settings = React.lazy(() => import('./components/Settings').then(m => ({ default: m.Settings })));
@@ -16,6 +16,7 @@ import { useStore } from './store/useStore';
 import confetti from 'canvas-confetti';
 
 const App: React.FC = () => {
+  console.log("ONEPOST: App component executing...");
   const navigate = useNavigate();
   const location = useLocation();
   const {
